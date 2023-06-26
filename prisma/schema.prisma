@@ -12,3 +12,29 @@ model EmailVerificationCode {
   email            String @unique
   verificationCode String
 }
+
+model User {
+  id             String       @id @default(uuid())
+  name           String
+  lastname       String
+  email          String       @unique
+  password       String
+  dateOfCreation DateTime     @default(now())
+  location       String?
+  about          String?
+  Initiative     Initiative[]
+}
+
+model Initiative {
+  id                String   @id @default(uuid())
+  title             String
+  description       String
+  searching         String
+  location          String
+  university        String
+  stage             String
+  dateOfPublication DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id])
+  userId            String
+  moderatorComment  String?
+}
