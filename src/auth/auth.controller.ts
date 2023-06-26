@@ -66,6 +66,8 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto) {
     const { email, password } = loginDto;
 
+    console.log(email, password);
+
     const user = await this.authService.login(email, password);
 
     return await this.authService.generateAccessToken(user);

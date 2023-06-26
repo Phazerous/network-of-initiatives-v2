@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -24,5 +24,9 @@ export class UsersService {
     });
 
     return user;
+  }
+
+  async verifyUserAccess(requestUserId: string, currentUserId: string) {
+    if (requestUserId !== currentUserId) throw new ForbiddenException();
   }
 }

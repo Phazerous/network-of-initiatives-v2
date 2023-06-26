@@ -33,6 +33,7 @@ model Initiative {
   location          String
   university        String
   stage             String
+  status            String   @default("Under Review")
   dateOfPublication DateTime @default(now())
   user              User     @relation(fields: [userId], references: [id])
   userId            String
