@@ -7,6 +7,7 @@ import {
   Request,
   Param,
   Get,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CreateInitiativeDto } from './dto/create-initiative.dto';
@@ -36,5 +37,18 @@ export class InitiativesController {
   @UseGuards()
   async getInitiativeById(@Param('initiativeId') initiativeId: string) {
     return await this.initiativeService.getInitiativeById(initiativeId);
+  }
+
+  @Get(':initiativeId/applications')
+  async getInitiativeApplications(
+    @Param('initiativeId') initiativeId: string,
+    @Request() req: any,
+  ) {
+    const userId = req.user.userId;
+
+    return await this.initiativeService.getInitiativeApplication(
+      initiativeId,
+      userId,
+    );
   }
 }

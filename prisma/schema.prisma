@@ -14,28 +14,42 @@ model EmailVerificationCode {
 }
 
 model User {
-  id             String       @id @default(uuid())
+  id             String        @id @default(uuid())
   name           String
   lastname       String
-  email          String       @unique
+  email          String        @unique
   password       String
-  dateOfCreation DateTime     @default(now())
+  dateOfCreation DateTime      @default(now())
   location       String?
   about          String?
   Initiative     Initiative[]
+  Application    Application[]
 }
 
 model Initiative {
-  id                String   @id @default(uuid())
+  id                String        @id @default(uuid())
   title             String
   description       String
   searching         String
   location          String
   university        String
   stage             String
-  status            String   @default("Under Review")
-  dateOfPublication DateTime @default(now())
-  user              User     @relation(fields: [userId], references: [id])
+  status            String        @default("Under Review")
+  dateOfPublication DateTime      @default(now())
+  user              User          @relation(fields: [userId], references: [id])
   userId            String
   moderatorComment  String?
+  Application       Application[]
+}
+
+model Application {
+  id                String     @id @default(uuid())
+  about             String
+  dateOfPublication DateTime   @default(now())
+  answer            String?
+  status            String     @default("Under Review")
+  applier           User       @relation(fields: [applierId], references: [id])
+  applierId         String
+  initiative        Initiative @relation(fields: [initiativeId], references: [id])
+  initiativeId      String
 }
