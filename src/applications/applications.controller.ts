@@ -4,6 +4,7 @@ import {
   Param,
   Request,
   Post,
+  Get,
   Body,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -28,5 +29,20 @@ export class ApplicationsController {
       userId,
       createApplicationDto,
     );
+  }
+
+  @Get(':applicationId')
+  async getApplicationById(
+    @Param('applicationId') applicationId: string,
+    @Request() req: any,
+  ) {
+    const userId = req.user.userId;
+
+    const application = await this.applicationService.getApplicationById(
+      applicationId,
+      userId,
+    );
+
+    return application;
   }
 }
