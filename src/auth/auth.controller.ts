@@ -6,6 +6,7 @@ import {
   ValidationPipe,
   Request,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import VerifyEmailDto from './dto/verify-email.dto';
@@ -16,6 +17,7 @@ import { JwtEmailVerificationGuard } from './jwt-email-verification.guard';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './dto/login-dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -36,18 +38,30 @@ export class AuthController {
 
   @Post('verify-email')
   @UsePipes(new ValidationPipe())
-  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+  async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const { email, verificationCode } = verifyEmailDto;
 
     await this.authService.verifyEmail(email, verificationCode);
 
-    return await this.authService.generateRegistrationToken(email);
+    const token = await this.authService.generateRegistrationToken(email);
+
+    response.cookie('REG_TOKEN', token, {
+      maxAge: 10 * 60 * 1000, // 10 minutes
+      httpOnly: true,
+    });
   }
 
   @Post('signup')
   @UseGuards(JwtEmailVerificationGuard)
   @UsePipes(new ValidationPipe())
-  async signup(@Request() req: any, @Body() signupDto: SignupDto) {
+  async signup(
+    @Request() req: any,
+    @Body() signupDto: SignupDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const email = req.user.email;
 
     const createUserDto = new CreateUserDto();
@@ -58,18 +72,26 @@ export class AuthController {
 
     const user = await this.userService.createUser(createUserDto);
 
-    return await this.authService.generateAccessToken(user);
+    const token = await this.authService.generateAccessToken(user);
+
+    response.cookie('USER_TOKEN', token, {
+      httpOnly: true,
+    });
   }
 
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto, @Res() response: Response) {
     const { email, password } = loginDto;
 
     console.log(email, password);
 
     const user = await this.authService.login(email, password);
 
-    return await this.authService.generateAccessToken(user);
+    const token = await this.authService.generateAccessToken(user);
+
+    response.cookie('USER_TOKEN', token, {
+      httpOnly: true,
+    });
   }
 }

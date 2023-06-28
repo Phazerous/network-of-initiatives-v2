@@ -10,7 +10,9 @@ export class JwtEmailVerificationStrategy extends PassportStrategy(
 ) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => request.cookies['REG_TOKEN'],
+      ]),
       ignoreExpiration: false,
       secretOrKey: jwtConstants.secret,
     });
