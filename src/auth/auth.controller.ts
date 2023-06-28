@@ -77,6 +77,8 @@ export class AuthController {
     response.cookie('USER_TOKEN', token, {
       httpOnly: true,
     });
+
+    return user.id;
   }
 
   @Post('login')
@@ -93,5 +95,7 @@ export class AuthController {
     response.cookie('USER_TOKEN', token, {
       httpOnly: true,
     });
+
+    return user.id;
   }
 }
