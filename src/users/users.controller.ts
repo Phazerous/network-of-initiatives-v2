@@ -13,6 +13,16 @@ export class UsersController {
     private applicationsService: ApplicationsService,
   ) {}
 
+  @Get(':userId')
+  async getUser(@Param('userId') requestedUserId: string, @Request() req: any) {
+    const currentUserId = req.user.userId;
+
+    return await this.usersService.getPartialUser(
+      requestedUserId,
+      currentUserId,
+    );
+  }
+
   @Get(':userId/initiatives')
   async getUserInitiatives(
     @Param('userId') requestedUserId: string,

@@ -1,4 +1,9 @@
-import { Injectable, Inject, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -28,5 +33,28 @@ export class UsersService {
 
   async verifyUserAccess(requestUserId: string, currentUserId: string) {
     if (requestUserId !== currentUserId) throw new ForbiddenException();
+  }
+
+  async getPartialUser(requestedUserId: string, currentUserId: string) {
+    if (requestedUserId !== currentUserId) throw new ForbiddenException();
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: requestedUserId,
+      },
+      select: {
+        name: true,
+        lastname: true,
+        location: true,
+        university: true,
+        email: true,
+        contact: true,
+        about: true,
+      },
+    });
+
+    if (!user) throw new NotFoundException();
+
+    return user;
   }
 }

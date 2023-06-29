@@ -83,10 +83,11 @@ export class AuthController {
 
   @Post('login')
   @UsePipes(new ValidationPipe())
-  async login(@Body() loginDto: LoginDto, @Res() response: Response) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const { email, password } = loginDto;
-
-    console.log(email, password);
 
     const user = await this.authService.login(email, password);
 

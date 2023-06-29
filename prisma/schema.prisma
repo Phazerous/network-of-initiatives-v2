@@ -21,6 +21,8 @@ model User {
   password       String
   dateOfCreation DateTime      @default(now())
   location       String?
+  university     String?
+  contact        String?
   about          String?
   Initiative     Initiative[]
   Application    Application[]
