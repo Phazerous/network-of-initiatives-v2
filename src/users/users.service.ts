@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import UpdateUserDto from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -54,6 +55,35 @@ export class UsersService {
     });
 
     if (!user) throw new NotFoundException();
+
+    return user;
+  }
+
+  async updateUser(
+    requestedUserId: string,
+    currentUserId: string,
+    updateUserDto: UpdateUserDto,
+  ) {
+    if (requestedUserId !== currentUserId) return new ForbiddenException();
+
+    const user = await this.prisma.user.update({
+      where: {
+        id: requestedUserId,
+      },
+      data: {
+        ...updateUserDto,
+      },
+      select: {
+        id: true,
+        name: true,
+        lastname: true,
+        location: true,
+        university: true,
+        email: true,
+        contact: true,
+        about: true,
+      },
+    });
 
     return user;
   }
