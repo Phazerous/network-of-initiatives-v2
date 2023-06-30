@@ -68,12 +68,24 @@ export class ApplicationsService {
     return initiative.user;
   }
 
-  async getUserApplications(requestedUserId: string, currentUserId: string) {
+  async getUserApplicationsShort(
+    requestedUserId: string,
+    currentUserId: string,
+  ) {
     if (requestedUserId !== currentUserId) throw new ForbiddenException();
 
     const applications = await this.prisma.application.findMany({
       where: {
         applierId: requestedUserId,
+      },
+      select: {
+        id: true,
+        status: true,
+        initiative: {
+          select: {
+            title: true,
+          },
+        },
       },
     });
 

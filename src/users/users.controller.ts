@@ -44,8 +44,6 @@ export class UsersController {
   ) {
     const currentUserId = req.user.userId;
 
-    console.log(requestedUserId, currentUserId);
-
     return await this.usersService.updateUser(
       requestedUserId,
       currentUserId,
@@ -72,7 +70,7 @@ export class UsersController {
   ) {
     const currentUserId = req.user.userId;
 
-    return await this.applicationsService.getUserApplications(
+    return await this.applicationsService.getUserApplicationsShort(
       requestedUserId,
       currentUserId,
     );
