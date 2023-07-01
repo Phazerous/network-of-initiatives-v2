@@ -25,6 +25,13 @@ export class UsersController {
     private applicationsService: ApplicationsService,
   ) {}
 
+  @Get('account')
+  async getUserId(@Request() req: any) {
+    const userId = req.user.userId;
+
+    return userId;
+  }
+
   @Get(':userId')
   async getUser(@Param('userId') requestedUserId: string, @Request() req: any) {
     const currentUserId = req.user.userId;
