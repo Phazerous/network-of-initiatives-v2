@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import statuses from 'src/statuses';
+import getStatus from 'src/statuses';
 
 @Injectable()
 export class ApplicationsService {
@@ -89,7 +91,19 @@ export class ApplicationsService {
       },
     });
 
-    return applications;
+    const formattedApplications = applications.map((app) => {
+      const status = getStatus(app.status);
+
+      if (!status) throw new Error('Unhandled in formatting');
+
+      return {
+        ...app,
+        statusText: status.statusText,
+        statusColor: status.statusColor,
+      };
+    });
+
+    return formattedApplications;
   }
 
   async getApplicationForUser(applicationId: string) {

@@ -8,7 +8,8 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import { CreateInitiativeDto } from './dto/create-initiative.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { UsersService } from 'src/users/users.service';
+import statuses from 'src/statuses';
+import getStatus from 'src/statuses';
 
 @Injectable()
 @UseGuards(JwtAuthGuard)
@@ -36,7 +37,19 @@ export class InitiativesService {
       },
     });
 
-    return initiatives;
+    const formattedInitiatives = initiatives.map((initiative) => {
+      const status = getStatus(initiative.status);
+
+      if (!status) throw new Error('Unhandled formatting.');
+
+      return {
+        ...initiative,
+        statusText: status.statusText,
+        statusColor: status.statusColor,
+      };
+    });
+
+    return formattedInitiatives;
   }
 
   async getInitiativeById(initiativeId: string) {
