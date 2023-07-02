@@ -91,4 +91,31 @@ export class ApplicationsService {
 
     return applications;
   }
+
+  async getApplicationForUser(applicationId: string) {
+    return 'Not yet implemented';
+  }
+
+  async getApplicationForInitiator(applicationId: string) {
+    const application = await this.prisma.application.findUnique({
+      where: {
+        id: applicationId,
+      },
+      select: {
+        about: true,
+        applier: {
+          select: {
+            name: true,
+            lastname: true,
+            location: true,
+            university: true,
+            contact: true,
+            about: true,
+          },
+        },
+      },
+    });
+
+    return application;
+  }
 }

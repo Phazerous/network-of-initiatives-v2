@@ -5,6 +5,7 @@ import {
   Request,
   Post,
   Get,
+  Query,
   Body,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -34,15 +35,15 @@ export class ApplicationsController {
   @Get(':applicationId')
   async getApplicationById(
     @Param('applicationId') applicationId: string,
+    @Query('type') type: string,
     @Request() req: any,
   ) {
     const userId = req.user.userId;
 
-    const application = await this.applicationService.getApplicationById(
-      applicationId,
-      userId,
-    );
+    if (type === 'initiator') {
+      return this.applicationService.getApplicationForInitiator(applicationId);
+    }
 
-    return application;
+    return '47 ON BACK';
   }
 }

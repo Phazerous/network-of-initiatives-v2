@@ -60,6 +60,7 @@ export class InitiativesService {
         Application: {
           select: {
             id: true,
+            status: true,
             applier: {
               select: {
                 name: true,
