@@ -8,7 +8,6 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import { CreateInitiativeDto } from './dto/create-initiative.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import statuses from 'src/statuses';
 import getStatus from 'src/statuses';
 
 @Injectable()
@@ -52,7 +51,7 @@ export class InitiativesService {
     return formattedInitiatives;
   }
 
-  async getInitiativeById(initiativeId: string) {
+  async getInitiativeById(initiativeId: string, currentUserId: string) {
     const initiative = await this.prisma.initiative.findUnique({
       where: {
         id: initiativeId,
@@ -61,7 +60,7 @@ export class InitiativesService {
 
     if (!initiative) throw new NotFoundException();
 
-    return initiative;
+    return { ...initiative, canEdit: currentUserId === initiative.userId };
   }
 
   async getInitiativeApplication(initiativeId: string, currentUserId: string) {
